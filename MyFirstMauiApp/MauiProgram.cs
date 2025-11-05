@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using MyFirstMauiApp.ViewModels.Pages;
+using Prism;
 
 namespace MyFirstMauiApp
 {
@@ -7,17 +9,24 @@ namespace MyFirstMauiApp
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
-            builder
+            _ = builder
                 .UseMauiApp<App>()
+                .UsePrism(static (prism) =>
+                {
+                    prism.RegisterTypes(container =>
+                    {
+                        container.RegisterForNavigation<MainPage, MainPageViewModel>();
+                    });
+                    prism.OnAppStart(app =>
+                    {
+                        app.NavigateAsync("/NavigationPage/MainPage");
+                    });
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
 
             return builder.Build();
         }
